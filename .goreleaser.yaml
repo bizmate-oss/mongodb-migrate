@@ -1,0 +1,39 @@
+version: 2
+
+project_name: mongodb-migrate
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - main: ./cmd/main.go
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm
+      - arm64
+
+archives:
+  - formats: [ 'tar.gz' ]
+    # this name template makes the OS and Arch compatible with the results of `uname`.
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+    format_overrides:
+      - goos: windows
+        formats: [ 'zip' ]
+
+changelog:
+  use: git
+  abbrev: -1
+  format: "{{.SHA}}: {{.Message}}" 
+
+release:
+  github:
+    owner: bizmate-oss
+    name: mongodb-migrate
